@@ -2,5 +2,5 @@
   "name": "VIBE",
   "description": "A digital social space centered on shared moments, orbital presence, and real-time synchrony.",
   "requestFramePermissions": [],
-  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GROQ_API"]
 }

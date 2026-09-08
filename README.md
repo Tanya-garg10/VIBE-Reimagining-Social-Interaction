@@ -21,7 +21,7 @@ A modern React-based social connection platform with AI-powered matching, vibe r
 - **Styling**: Tailwind CSS 4
 - **Animations**: Motion (Framer Motion)
 - **Backend**: Express.js server
-- **AI Integration**: Google Gemini AI
+- **AI Integration**: Groq
 - **Icons**: Lucide React
 
 ## Project Structure
@@ -81,7 +81,7 @@ vibe/
 
 2. Set your environment variables in `.env`:
    ```env
-   GEMINI_API_KEY="your_gemini_api_key"
+   GROQ_API_KEY="your_groq_api_key"
    APP_URL="http://localhost:3000"
    ```
 

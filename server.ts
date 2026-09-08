@@ -1,7 +1,7 @@
 import express from 'express';
 import path from 'path';
 import dotenv from 'dotenv';
-import { GoogleGenAI } from '@google/genai';
+import Groq from 'groq-sdk';
 import { createServer as createViteServer } from 'vite';
 
 dotenv.config();
@@ -11,12 +11,12 @@ const PORT = 3000;
 
 app.use(express.json());
 
-// Lazy-initialized Gemini AI client
-let aiClient: GoogleGenAI | null = null;
-function getGemini(): GoogleGenAI | null {
-  if (!process.env.GEMINI_API_KEY) return null;
+// Lazy-initialized Groq client
+let aiClient: Groq | null = null;
+function getGroq(): Groq | null {
+  if (!process.env.GROQ_API_KEY) return null;
   if (!aiClient) {
-    aiClient = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+    aiClient = new Groq({ apiKey: process.env.GROQ_API_KEY });
   }
   return aiClient;
 }
@@ -36,10 +36,10 @@ app.post('/api/ai/match', async (req, res) => {
       return res.status(400).json({ error: 'Intent is required' });
     }
 
-    const ai = getGemini();
+    const ai = getGroq();
 
     if (ai) {
-      const candidateModels = ['gemini-3.8-flash', 'gemini-flash-latest', 'gemini-3.1-flash-lite'];
+      const candidateModels = ['llama-3.3-70b-versatile', 'mixtral-8x7b-32768', 'gemma2-9b-it'];
       const prompt = `You are the matching intelligence engine of VIBE, an intentional social space where people connect for momentary shared presence and collaboration.
 The user is expressing their current intention: "${userIntent}".
 
@@ -70,18 +70,19 @@ Return ONLY valid JSON with this shape:
 
       for (const modelName of candidateModels) {
         try {
-          const response = await ai.models.generateContent({
+          const response = await ai.chat.completions.create({
             model: modelName,
-            contents: prompt,
-            config: {
-              responseMimeType: 'application/json',
-            },
+            messages: [
+              { role: 'system', content: 'You are a JSON-only response assistant. Always respond with valid JSON only.' },
+              { role: 'user', content: prompt }
+            ],
+            response_format: { type: "json_object" },
           });
 
-          const rawText = response.text || '{}';
+          const rawText = response.choices[0]?.message?.content || '{}';
           const parsed = JSON.parse(rawText);
           if (parsed && Array.isArray(parsed.matches) && parsed.matches.length > 0) {
-            return res.json({ success: true, ...parsed, poweredByGemini: true, modelUsed: modelName });
+            return res.json({ success: true, ...parsed, poweredByGroq: true, modelUsed: modelName });
           }
         } catch {
           // If model is experiencing temporary high demand (503/429), try next model or fallback
@@ -153,7 +154,7 @@ Return ONLY valid JSON with this shape:
       success: true,
       intentAnalysis: `Synchronous alignment detected for "${userIntent.slice(0, 60)}"`,
       matches: scored.slice(0, 4),
-      poweredByGemini: false,
+      poweredByGroq: false,
     });
   } catch (error: any) {
     console.error('Match endpoint error:', error);

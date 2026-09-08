@@ -28,7 +28,7 @@ export const AIMatchingView: React.FC<AIMatchingViewProps> = ({ onOpenConnectMod
   const [animationStage, setAnimationStage] = useState<number>(0);
   const [matches, setMatches] = useState<MatchCandidate[] | null>(null);
   const [intentSummary, setIntentSummary] = useState<string>('');
-  const [isPoweredByGemini, setIsPoweredByGemini] = useState(false);
+  const [isPoweredByGroq, setIsPoweredByGroq] = useState(false);
 
   const samplePrompts = [
     'I’m building a GenAI project and need someone strong in UI.',
@@ -103,7 +103,7 @@ export const AIMatchingView: React.FC<AIMatchingViewProps> = ({ onOpenConnectMod
           });
           setMatches(mapped);
           setIntentSummary(data.intentAnalysis || 'Intention aligned with active builders');
-          setIsPoweredByGemini(!!data.poweredByGemini);
+          setIsPoweredByGroq(!!data.poweredByGroq);
         } else {
           // Fallback static matches
           setMatches([
@@ -300,9 +300,9 @@ export const AIMatchingView: React.FC<AIMatchingViewProps> = ({ onOpenConnectMod
                 <span className="text-xs font-bold text-violet-300 tracking-wider uppercase">
                   SYNCHRONY CONSTELLATION
                 </span>
-                {isPoweredByGemini && (
+                {isPoweredByGroq && (
                   <span className="text-[10px] px-2.5 py-0.5 rounded-full bg-violet-500/20 text-violet-300 border border-violet-500/30 font-semibold">
-                    Powered by Gemini AI
+                    Powered by Groq
                   </span>
                 )}
               </div>
@@ -398,7 +398,7 @@ export const AIMatchingView: React.FC<AIMatchingViewProps> = ({ onOpenConnectMod
                         audioService.playConnectTone();
                         onOpenConnectModal(participantObj);
                       }}
-                      className="w-full py-3 rounded-full bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 text-white text-xs font-extrabold flex items-center justify-center gap-2 shadow-lg shadow-violet-600/30 transition-all hover:scale-[1.02] active:scale-98 cursor-pointer"
+                      className="w-full py-3 rounded-full bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 text-white text-xs font-extrabold flex items-center justify-center gap-2 shadow-lg shadow-violet-600/30 transition-all hover:scale-[1.02] active:scale-95 cursor-pointer"
                     >
                       <span>Connect for 30 min</span>
                       <ArrowRight className="w-3.5 h-3.5" />
