@@ -415,6 +415,6 @@ export const AIMatchingView: React.FC<AIMatchingViewProps> = ({ onOpenConnectMod
           </motion.div>
         )}
       </AnimatePresence>
-    </div>
+    </main>
   );
 };
