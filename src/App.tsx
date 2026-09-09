@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import { Navigation, NavTab } from './components/Navigation';
 import { HomeIntentionGrid } from './components/HomeIntentionGrid';
@@ -18,6 +18,8 @@ import { SparkBurstOverlay } from './components/SparkParticles';
 import { MOCK_VIBE_ROOMS, MOCK_PARTICIPANTS } from './data/mockData';
 import { VibeRoom, Participant, ActiveConnection, IntentionType } from './types';
 import { audioService } from './utils/audio';
+import { CONNECTION_CONFIG } from './utils/constants';
+import { handleError, logError } from './utils/errorHandler';
 
 export default function App() {
   const [currentTab, setCurrentTab] = useState<NavTab>('home');
@@ -27,16 +29,16 @@ export default function App() {
   const [activeConnections, setActiveConnections] = useState<ActiveConnection[]>([
     {
       id: 'init_conn_riya',
-      targetUser: { ...MOCK_PARTICIPANTS[0], onlineStatus: 'active' }, // Riya Sharma (Active)
+      targetUser: { ...MOCK_PARTICIPANTS[0], onlineStatus: 'active' },
       duration: '30 MIN',
-      totalSeconds: 30 * 60,
+      totalSeconds: CONNECTION_CONFIG.defaultDuration,
       remainingSeconds: 27 * 60 + 45,
       connectedAt: new Date(),
       vibeContext: 'AI Builders',
     },
     {
       id: 'init_conn_kabir',
-      targetUser: { ...MOCK_PARTICIPANTS[2], onlineStatus: 'idle' }, // Kabir Mehta (Idle)
+      targetUser: { ...MOCK_PARTICIPANTS[2], onlineStatus: 'idle' },
       duration: '1 HOUR',
       totalSeconds: 60 * 60,
       remainingSeconds: 48 * 60 + 12,
@@ -74,60 +76,105 @@ export default function App() {
     return () => clearInterval(timer);
   }, []);
 
-  const triggerSparkBurst = (e: React.MouseEvent, color?: string) => {
-    const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
-    const x = e.clientX || rect.left + rect.width / 2;
-    const y = e.clientY || rect.top + rect.height / 2;
+  const triggerSparkBurst = useCallback((e: React.MouseEvent, color?: string) => {
+    try {
+      const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
+      const x = e.clientX || rect.left + rect.width / 2;
+      const y = e.clientY || rect.top + rect.height / 2;
 
-    const newBurst = {
-      id: `burst_${Date.now()}_${Math.random()}`,
-      x,
-      y,
-      color: color || '#C084FC',
-    };
-    setSparkBursts((prev) => [...prev, newBurst]);
-  };
+      const newBurst = {
+        id: `burst_${Date.now()}_${Math.random()}`,
+        x,
+        y,
+        color: color || '#C084FC',
+      };
+      setSparkBursts((prev) => [...prev, newBurst]);
+    } catch (error) {
+      const appError = handleError(error, 'triggerSparkBurst');
+      logError(appError);
+    }
+  }, []);
 
-  const removeSparkBurst = (id: string) => {
-    setSparkBursts((prev) => prev.filter((b) => b.id !== id));
-  };
+  const removeSparkBurst = useCallback((id: string) => {
+    try {
+      setSparkBursts((prev) => prev.filter((b) => b.id !== id));
+    } catch (error) {
+      const appError = handleError(error, 'removeSparkBurst');
+      logError(appError);
+    }
+  }, []);
 
-  const handleToggleAmbient = () => {
-    const playing = audioService.toggleAmbientPresence();
-    setIsAmbientPlaying(playing);
-  };
+  const handleToggleAmbient = useCallback(() => {
+    try {
+      const playing = audioService.toggleAmbientPresence();
+      setIsAmbientPlaying(playing);
+    } catch (error) {
+      const appError = handleError(error, 'handleToggleAmbient');
+      logError(appError);
+    }
+  }, []);
 
-  const handleToggleMute = () => {
-    const muted = audioService.toggleMute();
-    setIsMuted(muted);
-  };
+  const handleToggleMute = useCallback(() => {
+    try {
+      const muted = audioService.toggleMute();
+      setIsMuted(muted);
+    } catch (error) {
+      const appError = handleError(error, 'handleToggleMute');
+      logError(appError);
+    }
+  }, []);
 
-  const handleSelectIntention = (intention: IntentionType, vibeId?: string) => {
-    const targetRoom = MOCK_VIBE_ROOMS.find((v) => v.id === vibeId) || MOCK_VIBE_ROOMS[0];
-    setSelectedRoom(targetRoom);
-    setCurrentTab('room');
-  };
+  const handleSelectIntention = useCallback((intention: IntentionType, vibeId?: string) => {
+    try {
+      const targetRoom = MOCK_VIBE_ROOMS.find((v) => v.id === vibeId) || MOCK_VIBE_ROOMS[0];
+      setSelectedRoom(targetRoom);
+      setCurrentTab('room');
+    } catch (error) {
+      const appError = handleError(error, 'handleSelectIntention');
+      logError(appError);
+    }
+  }, []);
 
-  const handleEnterVibe = (room: VibeRoom) => {
-    setSelectedRoom(room);
-    setCurrentTab('room');
-  };
+  const handleEnterVibe = useCallback((room: VibeRoom) => {
+    try {
+      setSelectedRoom(room);
+      setCurrentTab('room');
+    } catch (error) {
+      const appError = handleError(error, 'handleEnterVibe');
+      logError(appError);
+    }
+  }, []);
 
-  const handleOpenConnectModal = (participant: Participant, context?: string) => {
-    setModalParticipant(participant);
-    setModalVibeContext(context || selectedRoom.name);
-  };
+  const handleOpenConnectModal = useCallback((participant: Participant, context?: string) => {
+    try {
+      setModalParticipant(participant);
+      setModalVibeContext(context || selectedRoom.name);
+    } catch (error) {
+      const appError = handleError(error, 'handleOpenConnectModal');
+      logError(appError);
+    }
+  }, [selectedRoom.name]);
 
-  const handleAddConnection = (newConn: ActiveConnection) => {
-    setActiveConnections((prev) => [
-      newConn,
-      ...prev.filter((c) => c.targetUser.id !== newConn.targetUser.id),
-    ]);
-  };
+  const handleAddConnection = useCallback((newConn: ActiveConnection) => {
+    try {
+      setActiveConnections((prev) => [
+        newConn,
+        ...prev.filter((c) => c.targetUser.id !== newConn.targetUser.id),
+      ]);
+    } catch (error) {
+      const appError = handleError(error, 'handleAddConnection');
+      logError(appError);
+    }
+  }, []);
 
-  const handleRemoveConnection = (id: string) => {
-    setActiveConnections((prev) => prev.filter((c) => c.id !== id));
-  };
+  const handleRemoveConnection = useCallback((id: string) => {
+    try {
+      setActiveConnections((prev) => prev.filter((c) => c.id !== id));
+    } catch (error) {
+      const appError = handleError(error, 'handleRemoveConnection');
+      logError(appError);
+    }
+  }, []);
 
   return (
     <div className="min-h-screen bg-[#07080D] text-slate-100 relative overflow-x-hidden selection:bg-violet-500/30 selection:text-violet-200">

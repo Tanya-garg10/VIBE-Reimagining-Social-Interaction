@@ -170,11 +170,11 @@ export const AIMatchingView: React.FC<AIMatchingViewProps> = ({ onOpenConnectMod
     : [];
 
   return (
-    <div className="min-h-screen pt-28 md:pt-24 pb-16 px-4 sm:px-8 max-w-6xl mx-auto flex flex-col items-center">
+    <main className="min-h-screen pt-28 md:pt-24 pb-16 px-4 sm:px-8 max-w-6xl mx-auto flex flex-col items-center" role="main">
       {/* Top Header */}
       <div className="text-center max-w-2xl mx-auto mb-10">
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-violet-950/60 border border-violet-500/30 text-violet-300 text-xs font-semibold mb-3">
-          <Sparkles className="w-3.5 h-3.5 text-violet-400" />
+          <Sparkles className="w-3.5 h-3.5 text-violet-400" aria-hidden="true" />
           <span>Synchrony Matching Engine</span>
         </div>
 
@@ -192,30 +192,34 @@ export const AIMatchingView: React.FC<AIMatchingViewProps> = ({ onOpenConnectMod
         <form
           onSubmit={handleStartMatching}
           className="relative flex flex-col sm:flex-row items-center gap-2 p-2 rounded-2xl sm:rounded-full bg-[#0E101D] border border-white/15 backdrop-blur-xl shadow-2xl focus-within:border-violet-500 transition-colors"
+          role="search"
+          aria-label="Find people with matching intentions"
         >
           <div className="flex-1 flex items-center gap-3 px-4 w-full">
-            <Search className="w-5 h-5 text-slate-400 shrink-0" />
+            <Search className="w-5 h-5 text-slate-400 shrink-0" aria-hidden="true" />
             <input
               type="text"
               value={intentInput}
               onChange={(e) => setIntentInput(e.target.value)}
               placeholder="e.g. I’m building a GenAI project and need someone strong in UI..."
-              className="w-full py-3 bg-transparent text-sm sm:text-base text-white placeholder-slate-500 focus:outline-none"
+              className="w-full py-3 bg-transparent text-sm sm:text-base text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-violet-500 rounded-lg"
+              aria-label="Enter your intention or what you're looking for"
             />
           </div>
 
           <button
             type="submit"
             disabled={isMatching || !intentInput.trim()}
-            className="w-full sm:w-auto px-7 py-3.5 rounded-full bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 text-white text-xs sm:text-sm font-extrabold flex items-center justify-center gap-2 shadow-lg shadow-violet-600/30 disabled:opacity-50 cursor-pointer hover:scale-105 active:scale-95 transition-all"
+            aria-label={isMatching ? 'Finding matches...' : 'Find people with matching intentions'}
+            className="w-full sm:w-auto px-7 py-3.5 rounded-full bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 text-white text-xs sm:text-sm font-extrabold flex items-center justify-center gap-2 shadow-lg shadow-violet-600/30 disabled:opacity-50 cursor-pointer hover:scale-105 active:scale-95 transition-all focus:outline-none focus:ring-2 focus:ring-violet-500 focus:ring-offset-2 focus:ring-offset-[#0E101D]"
           >
-            <span>Find My People</span>
-            <ArrowRight className="w-4 h-4" />
+            <span>{isMatching ? 'Finding...' : 'Find My People'}</span>
+            <ArrowRight className="w-4 h-4" aria-hidden="true" />
           </button>
         </form>
 
         {/* Quick Suggestion Chips */}
-        <div className="flex flex-wrap items-center gap-2 mt-3 px-2">
+        <div className="flex flex-wrap items-center gap-2 mt-3 px-2" role="group" aria-label="Quick suggestion prompts">
           <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">
             Try:
           </span>
@@ -227,7 +231,8 @@ export const AIMatchingView: React.FC<AIMatchingViewProps> = ({ onOpenConnectMod
                 setIntentInput(p);
                 audioService.playSparkTone();
               }}
-              className="text-xs px-3 py-1 rounded-full bg-white/5 hover:bg-white/10 text-slate-400 hover:text-slate-200 border border-white/5 transition-colors text-left truncate max-w-xs"
+              className="text-xs px-3 py-1 rounded-full bg-white/5 hover:bg-white/10 text-slate-400 hover:text-slate-200 border border-white/5 transition-colors text-left truncate max-w-xs focus:outline-none focus:ring-2 focus:ring-violet-500 focus:ring-offset-2 focus:ring-offset-[#0E101D]"
+              aria-label={`Use suggestion: ${p}`}
             >
               {p}
             </button>

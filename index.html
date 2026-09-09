@@ -3,8 +3,8 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>VIBE — Social is a Moment</title>
     <meta name="description" content="A futuristic digital social space where people, intentions, and moments visually orbit around shared energy." />
+    <meta name="theme-color" content="#07080D" />
     <meta property="og:title" content="VIBE — Social is a Moment" />
     <meta property="og:description" content="A futuristic digital social space where people, intentions, and moments visually orbit around shared energy." />
     <meta property="og:type" content="website" />
@@ -12,9 +12,14 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+      /* Critical CSS for above-the-fold content */
+      body { margin: 0; padding: 0; }
+      #root { min-height: 100vh; }
+    </style>
   </head>
   <body class="bg-[#07080D] text-slate-100 overflow-x-hidden antialiased selection:bg-violet-500/30 selection:text-violet-200">
-    <div id="root"></div>
+    <div id="root" role="main" aria-label="VIBE Social Platform"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
