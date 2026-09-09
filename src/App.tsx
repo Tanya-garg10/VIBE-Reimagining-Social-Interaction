@@ -15,6 +15,9 @@ import { ProfileConstellation } from './components/ProfileConstellation';
 import { ActiveConnectionsView } from './components/ActiveConnectionsView';
 import { ConnectModal } from './components/ConnectModal';
 import { SparkBurstOverlay } from './components/SparkParticles';
+import { GamificationSystem } from './components/Gamification';
+import { VoiceAssistant } from './components/VoiceAssistant';
+import { RealTimePresence } from './components/RealTimePresence';
 import { MOCK_VIBE_ROOMS, MOCK_PARTICIPANTS } from './data/mockData';
 import { VibeRoom, Participant, ActiveConnection, IntentionType } from './types';
 import { audioService } from './utils/audio';
@@ -327,6 +330,15 @@ export default function App() {
         onConnect={handleAddConnection}
         onTriggerSpark={triggerSparkBurst}
       />
+
+      {/* Gamification System */}
+      <GamificationSystem />
+
+      {/* Voice Assistant */}
+      <VoiceAssistant />
+
+      {/* Real-time Presence */}
+      <RealTimePresence />
     </div>
   );
 }
